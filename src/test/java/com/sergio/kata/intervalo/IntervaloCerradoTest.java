@@ -1,103 +1,85 @@
 package com.sergio.kata.intervalo;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
+import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
+import org.junit.runners.Parameterized.Parameter;
+import org.junit.runners.Parameterized.Parameters;
 
+@RunWith(Parameterized.class)
 public class IntervaloCerradoTest {
 
-	@Test
-	public void intervalo2Y8IncluyeElNumero3() {
-		// Arrange
-		IntervaloCerrado intervalo = new IntervaloCerrado(2, 8);
-		// Assert
-		assertTrue(intervalo.incluye(3));
+	@Parameter(0)
+	public int min;
+	@Parameter(1)
+	public int max;
+
+	@Parameter(2)
+	public int numero;
+	@Parameter(3)
+	public IntervaloCerrado intervaloTest;
+
+	@Parameter(4)
+	public boolean expectedIncluyeValor;
+	@Parameter(5)
+	public boolean expectedIncluyeIntervalo;
+	@Parameter(6)
+	public boolean expectedIntersectando;
+
+	@Parameter(7)
+	public IntervaloCerrado expectedUnion;
+
+	@Parameter(8)
+	public IntervaloCerrado expectedInterseccion;
+
+	@Parameters(name = "Min: {0}, Max: {1}, IntervaloTest: {3}, IncluyeValor({2}) = {4}")
+	public static Collection<Object[]> data() {
+		List<Object[]> items = new ArrayList<>();
+		items.add(new Object[] { -2, 4, 0, new IntervaloCerrado(2, 5), true, false, true, new IntervaloCerrado(-2, 5),
+				new IntervaloCerrado(2, 4) });
+		items.add(new Object[] { -5, 7, -10, new IntervaloCerrado(-8, 4), false, false, true,
+				new IntervaloCerrado(-8, 7), new IntervaloCerrado(-5, 4) });
+		items.add(new Object[] { -10, 12, 6, new IntervaloCerrado(0, 9), true, true, true,
+				new IntervaloCerrado(-10, 12), new IntervaloCerrado(0, 9) });
+		return items;
+	}
+
+	private IntervaloCerrado intervalo;
+
+	@Before
+	public void before() {
+		intervalo = new IntervaloCerrado(min, max);
 	}
 
 	@Test
-	public void intervaloMenos3YUnoNoIncluyeElNumeroMenosCuatro() {
-		// Arrange
-		IntervaloCerrado intervalo = new IntervaloCerrado(-3, 1);
-		// Assert
-		assertFalse(intervalo.incluye(-4));
+	public void testIncluyeValor() {
+		assertEquals(expectedIncluyeValor, intervalo.incluye(numero));
 	}
 
 	@Test
-	public void intervalo4Y12IncluyeIntervalo5Y9() {
-		// Arrange
-		IntervaloCerrado intervalo1 = new IntervaloCerrado(4, 12);
-		IntervaloCerrado intervalo2 = new IntervaloCerrado(5, 9);
-		// Act
-		assertTrue(intervalo1.incluye(intervalo2));
+	public void testIncluyeIntervalo() {
+		assertEquals(expectedIncluyeIntervalo, intervalo.incluye(intervaloTest));
 	}
 
 	@Test
-	public void intervaloMenos1Y3NoIncluyeIntervaloMenos3Y1() {
-		// Arrange
-		IntervaloCerrado intervalo1 = new IntervaloCerrado(-1, 3);
-		IntervaloCerrado intervalo2 = new IntervaloCerrado(-3, 1);
-
-		// Assert
-		assertFalse(intervalo1.incluye(intervalo2));
+	public void testIntersectando() {
+		assertEquals(expectedIntersectando, intervalo.intersectando(intervaloTest));
 	}
 
 	@Test
-	public void intervaloMenos2Y6EstaIntersectandoConIntervalo5Y10() {
-		// Arrange
-		IntervaloCerrado intervalo1 = new IntervaloCerrado(2, 6);
-		IntervaloCerrado intervalo2 = new IntervaloCerrado(5, 10);
-
-		// Assert
-		assertTrue(intervalo1.intersectando(intervalo2));
+	public void testUnion() {
+		assertEquals(expectedUnion, intervalo.union(intervaloTest));
 	}
 
 	@Test
-	public void intervaloMenos3Y3EstaIntersectandoConIntervaloMenos5YUno() {
-		// Arrange
-		IntervaloCerrado intervalo1 = new IntervaloCerrado(-3, 3);
-		IntervaloCerrado intervalo2 = new IntervaloCerrado(-5, 1);
-
-		// Assert
-		assertTrue(intervalo1.intersectando(intervalo2));
-	}
-
-	@Test
-	public void intervalo0Y3EstaIntersectandoConIntervaloMenos1Y7() {
-		// Arrange
-		IntervaloCerrado intervalo1 = new IntervaloCerrado(0, 3);
-		IntervaloCerrado intervalo2 = new IntervaloCerrado(-1, 7);
-
-		// Assert
-		assertTrue(intervalo1.intersectando(intervalo2));
-	}
-
-	@Test
-	public void intervalo3Y7UnionIntervaloMenos2Y4RetornaIntervaloMenos2Y7() {
-		// Arrange
-		IntervaloCerrado intervalo1 = new IntervaloCerrado(3, 7);
-		IntervaloCerrado intervalo2 = new IntervaloCerrado(-2, 4);
-
-		// Act
-		IntervaloCerrado actual = intervalo1.union(intervalo2);
-		IntervaloCerrado esperado = new IntervaloCerrado(-2, 7);
-
-		// Assert
-		assertEquals(esperado, actual);
-	}
-
-	@Test
-	public void intervaloMenos2YCuatroInterseccion2Y5RetornaIntervalo2Y4() {
-		// Arrange
-		IntervaloCerrado intervalo1 = new IntervaloCerrado(-2, 4);
-		IntervaloCerrado intervalo2 = new IntervaloCerrado(2, 5);
-
-		// Act
-		IntervaloCerrado actual = intervalo1.interseccion(intervalo2);
-		IntervaloCerrado esperado = new IntervaloCerrado(2, 4);
-
-		// Assert
-		assertEquals(esperado, actual);
+	public void testInterseccion() {
+		assertEquals(expectedInterseccion, intervalo.interseccion(intervaloTest));
 	}
 }

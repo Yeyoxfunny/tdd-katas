@@ -66,4 +66,10 @@ public class IntervaloCerrado {
 			return false;
 		return true;
 	}
+
+	@Override
+	public String toString() {
+		return "[min=" + min + ", max=" + max + "]";
+	}
+
 }
